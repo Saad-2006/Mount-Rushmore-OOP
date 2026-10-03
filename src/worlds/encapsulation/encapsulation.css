@@ -1,0 +1,248 @@
+/* I · Encapsulation — industrial, mechanical, controlled.
+   Charcoal, one warm thing (amber), cool white. */
+.world--encapsulation {
+  --bg: #0d0d0d;
+  --fg: #f0f0f0;
+  --amber: #f5a623;
+}
+
+.enc {
+  --s: min(40vh, 36vw, 420px);
+  --h: calc(var(--s) / 2);
+  --leak: 0.2;
+  --inside: 0;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, #151515 0%, transparent 70%),
+    var(--bg);
+}
+
+/* ── Scene ─────────────────────────────────────────────── */
+.enc__scene {
+  position: absolute;
+  inset: 0 0 18vh;
+  display: grid;
+  place-items: center;
+}
+
+.enc__glow {
+  position: absolute;
+  width: calc(var(--s) * 3.4);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 166, 35, 0.34) 0%, rgba(245, 166, 35, 0.1) 35%, transparent 68%);
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.enc__spill {
+  position: absolute;
+  top: calc(50% + var(--s) * 0.62);
+  width: calc(var(--s) * 3);
+  height: calc(var(--s) * 0.5);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 30%, rgba(245, 166, 35, 0.28), transparent 70%);
+  opacity: 0;
+  transform: scaleX(0.6);
+  pointer-events: none;
+}
+
+/* Perspective lives on the pivot so the pivot itself can scale and fade
+   without flattening the cube. */
+.enc__pivot {
+  perspective: calc(var(--s) * 4.2);
+  perspective-origin: 50% 35%;
+}
+
+.enc__cube {
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* Outer shell: matte, symmetrical, perfect. */
+.face.out { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.045); }
+.out.back   { transform: rotateY(180deg) translateZ(var(--h)); background: #0c0c0c; }
+.out.left   { transform: rotateY(-90deg) translateZ(var(--h)); background: linear-gradient(90deg, #121212, #0d0d0d); }
+.out.right  { transform: rotateY(90deg) translateZ(var(--h)); background: linear-gradient(90deg, #0a0a0a, #060606); }
+.out.top    { transform: rotateX(90deg) translateZ(var(--h)); background: linear-gradient(#1f1f1f, #141414); }
+.out.bottom { transform: rotateX(-90deg) translateZ(var(--h)); background: #050505; }
+
+/* Inner walls: where the work happens. */
+.face.in {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(245, 166, 35, calc(0.3 * var(--inside))) 0%, transparent 75%),
+    #0a0805;
+  color: var(--amber);
+}
+.face.in > * { opacity: calc(0.15 + var(--inside) * 0.85); }
+.in.back   { transform: translateZ(calc(var(--h) * -1)); }
+.in.left   { transform: rotateY(90deg) translateZ(calc(var(--h) * -1)); }
+.in.right  { transform: rotateY(-90deg) translateZ(calc(var(--h) * -1)); }
+.in.top    { transform: rotateX(-90deg) translateZ(calc(var(--h) * -1)); }
+.in.bottom { transform: rotateX(90deg) translateZ(calc(var(--h) * -1)); }
+
+.face.in svg,
+.door.in svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.face.in .wires { mix-blend-mode: screen; }
+
+.memory {
+  position: absolute;
+  inset: 8%;
+  display: grid;
+  align-content: space-between;
+  font-size: calc(var(--s) * 0.034);
+  line-height: 1;
+  color: rgba(245, 166, 35, 0.55);
+  text-align: center;
+}
+.memory .hot { color: #fff; text-shadow: 0 0 6px var(--amber); }
+
+/* Private state, floating at depth. */
+.enc__float {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.enc__float-gears {
+  position: absolute;
+  left: 18%;
+  top: 18%;
+  width: 64%;
+  height: 64%;
+  color: #f0f0f0;
+  opacity: calc(var(--inside) * 0.5);
+  transform: translateZ(calc(var(--s) * -0.18));
+}
+.enc__private {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: calc(var(--s) * 0.036);
+  letter-spacing: 0.04em;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(245, 166, 35, 0.9);
+  transform: translate(-50%, -50%) translate3d(calc(var(--x) * var(--s)), calc(var(--y) * var(--s)), calc(var(--z) * var(--s)));
+}
+
+/* The door. The hinge holds the offset; GSAP owns the door's transform. */
+.enc__hinge {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(var(--h));
+}
+.enc__door {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.door {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+.door.out {
+  background: linear-gradient(158deg, #1b1b1b 0%, #101010 55%, #0b0b0b 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+/* The seam: the only warmth on the outside. */
+.door.out::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--amber);
+  box-shadow: 0 0 calc(4px + var(--leak) * 18px) var(--amber), 0 0 2px var(--amber);
+  opacity: var(--leak);
+}
+.door.in {
+  transform: rotateY(180deg);
+  background: linear-gradient(200deg, #14100a, #0b0905);
+  color: var(--amber);
+}
+
+/* Engraved public interface — barely there, like a maker's mark. */
+.door__api {
+  position: absolute;
+  left: 9%;
+  bottom: 8%;
+  list-style: none;
+  font-size: calc(var(--s) * 0.03);
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.16);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ── Type ──────────────────────────────────────────────── */
+.enc__meta {
+  position: absolute;
+  top: calc(var(--gutter) + 40px);
+  left: var(--gutter);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.enc__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12vh;
+  text-align: center;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 9.2vw, 190px);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.enc__title .char { display: inline-block; will-change: transform, opacity; }
+
+.enc__line {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--gutter);
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(240, 240, 240, 0.6);
+}
+
+.enc__hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--gutter);
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 240, 0.4);
+}
+
+
+@media (max-width: 720px) {
+  .enc { --s: min(50vw, 30vh); }
+  .enc__scene { inset: 0 0 24vh; }
+  .enc__title { bottom: 18vh; font-size: 10.6vw; }
+  .enc__line { font-size: 12px; }
+  .enc__hint { bottom: calc(var(--gutter) + 60px); }
+}

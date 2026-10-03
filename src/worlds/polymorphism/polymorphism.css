@@ -1,0 +1,164 @@
+/* IV · Polymorphism — unstable, shifting. No fixed palette. */
+.world--polymorphism {
+  --bg: #0d0d0d;
+  --fg: #f7f0ff;
+  --violet: #1a0a2e;
+  --purple: #7b2fbe;
+  --magenta: #d946ef;
+  --accent: var(--magenta);
+}
+
+.poly {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  color: var(--fg);
+}
+
+/* Identity crisis: stacked washes, crossfaded by opacity only. */
+.poly__bg, .poly__wash { position: absolute; inset: 0; }
+.poly__wash { opacity: 0; }
+.poly__wash--violet {
+  opacity: 1;
+  background: radial-gradient(ellipse 80% 70% at 50% 45%, #2b1150 0%, var(--violet) 60%, #0c0418 100%);
+}
+.poly__wash--purple {
+  background: radial-gradient(ellipse 80% 70% at 30% 40%, #9b4be0 0%, var(--purple) 40%, #2a0d4a 100%);
+}
+.poly__wash--magenta {
+  background: radial-gradient(ellipse 80% 70% at 70% 55%, #f07af8 0%, var(--magenta) 35%, #5b1270 100%);
+}
+.poly__wash--black {
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, #1a1420 0%, var(--bg) 70%);
+}
+
+.poly__meta {
+  position: absolute;
+  top: calc(var(--gutter) + 40px);
+  left: var(--gutter);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 240, 255, 0.75);
+}
+
+.poly__stage {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: min(52vh, 60vw, 460px);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.poly__svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+.poly__shape { fill: var(--fg); filter: drop-shadow(0 0 28px rgba(247, 240, 255, 0.35)); }
+.poly__ghost { fill: none; stroke-width: 2; mix-blend-mode: screen; opacity: 0.8; }
+.poly__ghost--a { stroke: #ff3df2; }
+.poly__ghost--b { stroke: #3df5ff; }
+
+.poly__deco [data-wave] { fill: none; stroke: var(--fg); stroke-width: 6; stroke-linecap: round; }
+.poly__clock line { stroke: #1a0a2e; stroke-width: 4; stroke-linecap: round; }
+.poly__clock .poly__hand { stroke-width: 6; }
+.poly__clock .poly__hand--h { stroke-width: 8; }
+.poly__clock .poly__hand--s { stroke: #d946ef; stroke-width: 2.5; }
+.poly__pivot { fill: #d946ef; }
+.poly__hole { fill: #2a0d3e; }
+.poly__shadow { fill: #000; }
+
+.poly__call {
+  margin-top: 26px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: rgba(247, 240, 255, 0.55);
+}
+.poly__obj { color: var(--fg); }
+.poly__out {
+  margin-top: 6px;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  min-height: 1.6em;
+}
+
+/* Context cards */
+.poly__card {
+  position: absolute;
+  top: 34%;
+  padding: 22px 26px 24px;
+  min-width: 220px;
+  border: 1px solid rgba(247, 240, 255, 0.28);
+  background: rgba(13, 13, 13, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.poly__card--left { left: var(--gutter); }
+.poly__card--right { right: var(--gutter); }
+.poly__card-k {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 240, 255, 0.6);
+}
+.poly__card-v {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-top: 8px;
+}
+
+/* The undecided word */
+.poly__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9vh;
+  text-align: center;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 9vw, 180px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+.poly__title .char {
+  display: inline-block;
+  min-width: 0.42em;
+  font-family: var(--mono);
+  font-size: 0.72em;
+  color: rgba(247, 240, 255, 0.55);
+}
+.poly__title .char.on {
+  font-family: var(--serif);
+  font-size: 1em;
+  min-width: 0;
+  color: var(--fg);
+}
+
+.poly__line {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--gutter);
+  font-size: 14px;
+  color: rgba(247, 240, 255, 0.7);
+}
+
+.poly__hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--gutter);
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 240, 255, 0.45);
+}
+
+@media (max-width: 720px) {
+  .poly__stage { top: 38%; width: 62vw; }
+  .poly__card { top: auto; bottom: 34vh; min-width: 0; padding: 14px 18px; }
+  .poly__title { bottom: 20vh; font-size: 11vw; }
+  .poly__line { font-size: 12px; }
+  .poly__hint { bottom: calc(var(--gutter) + 70px); }
+}

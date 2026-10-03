@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.DS_Store
+# Source scans, processing scripts and test screenshots — not part of the site.
+assets-raw/

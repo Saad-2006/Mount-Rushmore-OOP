@@ -1,0 +1,128 @@
+.hub {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.hub > * { pointer-events: auto; }
+
+/* ── Intro ─────────────────────────────────────────────── */
+.intro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+  padding: 0 var(--gutter);
+  text-align: center;
+  pointer-events: none;
+}
+.intro__line {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 4.2vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+}
+.intro__line .char { display: inline-block; opacity: 0; }
+/* ── Monument label (on hover / focus) ─────────────────── */
+.label {
+  position: absolute;
+  left: var(--gutter);
+  bottom: calc(var(--gutter) + 8px);
+  max-width: calc(100% - 2 * var(--gutter));
+  pointer-events: none;
+}
+.label__meta {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  opacity: 0;
+}
+.label__name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(52px, 10.5vw, 200px);
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+.label__name .char { display: inline-block; will-change: transform, opacity; }
+.label__line {
+  margin-top: 18px;
+  max-width: 34ch;
+  font-size: 14px;
+  color: var(--dim);
+  opacity: 0;
+}
+
+/* ── Monument nav ──────────────────────────────────────── */
+.monuments {
+  position: absolute;
+  right: var(--gutter);
+  bottom: calc(var(--gutter) + 48px);
+  text-align: right;
+  opacity: 0;
+  visibility: hidden;
+}
+.monuments__prompt {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 14px;
+}
+.monuments__list { list-style: none; display: grid; gap: 4px; }
+.monuments__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 4px 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  transition: color 0.4s;
+}
+.monuments__item .num {
+  width: 2.4em;
+  text-align: right;
+  color: var(--faint);
+  transition: color 0.4s;
+}
+.monuments__item[aria-current='true'],
+.monuments__item:hover,
+.monuments__item:focus-visible { color: var(--bone); }
+.monuments__item[aria-current='true'] .num { color: var(--c); }
+
+/* ── Credit (CC BY attribution) ────────────────────────── */
+.credit {
+  position: absolute;
+  top: var(--gutter);
+  right: var(--gutter);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-decoration: none;
+  opacity: 0;
+  transition: color 0.3s;
+}
+.credit:hover { color: var(--dim); }
+
+/* ── States ────────────────────────────────────────────── */
+.hub[data-state='intro'] .credit,
+.hub[data-state='intro'] .monuments { pointer-events: none; }
+
+@media (max-width: 720px) {
+  .label { bottom: 172px; }
+  .label__line { display: none; }
+  .monuments { left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 40px); text-align: left; }
+  .monuments__prompt { display: none; }
+  .monuments__list { grid-template-columns: 1fr 1fr; gap: 2px 12px; }
+  .monuments__item { gap: 10px; font-size: 12px; letter-spacing: 0.03em; padding: 6px 0; }
+  .monuments__item .num { width: 2em; text-align: left; }
+  .credit { font-size: 9px; left: var(--gutter); text-align: right; }
+}

@@ -1,0 +1,135 @@
+/* The Cursor. Native pointer hidden only when ours exists (fine pointers). */
+html.has-cursor,
+html.has-cursor * { cursor: none !important; }
+
+.cursor {
+  --press: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0;
+}
+.cursor > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+/* Each part is centred on its point with margins, so JS only ever sets translate. */
+.cursor__dot {
+  width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--tint, var(--bone));
+  transition: background 0.4s, width 0.6s var(--ease), height 0.6s var(--ease), margin 0.6s var(--ease), opacity 0.4s;
+}
+.cursor__ring {
+  width: 38px; height: 38px; margin: -19px 0 0 -19px;
+}
+.cursor__ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--tint, rgba(233, 228, 218, 0.55));
+  background: transparent;
+  /* A dark halo keeps the ring legible over a lit face of the same colour. */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  transform: scale(var(--press));
+  transition: transform 0.7s var(--ease), border-color 0.4s, background 0.4s;
+}
+.cursor__box, .cursor__chain, .cursor__shape { opacity: 0; transition: opacity 0.5s var(--ease); }
+
+.cursor__label {
+  margin: 30px 0 0 22px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tint, var(--bone));
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.4s var(--ease);
+}
+.cursor.has-label .cursor__label { opacity: 1; }
+
+/* Hover: the ring opens up around whatever you're about to touch. */
+.cursor.is-hover .cursor__ring::before {
+  transform: scale(calc(1.9 * var(--press)));
+  background: color-mix(in srgb, var(--tint, #e9e4da) 10%, transparent);
+}
+.cursor.is-hover .cursor__dot { width: 4px; height: 4px; margin: -2px 0 0 -2px; }
+
+/* ── Encapsulation: a box, and the pointer trapped inside it ─────────────── */
+.cursor[data-mode='encapsulation'] .cursor__ring { opacity: 0; }
+.cursor[data-mode='encapsulation'] .cursor__box { opacity: 1; }
+.cursor__box {
+  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+}
+.cursor__box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset -1px 0 0 #f5a623, 0 0 14px rgba(245, 166, 35, 0.25);
+  transform: scale(var(--press));
+  transition: transform 0.6s var(--ease);
+}
+.cursor[data-mode='encapsulation'] .cursor__dot { background: #f5a623; width: 4px; height: 4px; margin: -2px 0 0 -2px; }
+.cursor[data-mode='encapsulation'].is-hover .cursor__box::before { transform: scale(calc(1.5 * var(--press))) rotate(45deg); }
+
+/* ── Abstraction: just the idea of a pointer ───────────────────────────── */
+.cursor[data-mode='abstraction'] .cursor__ring { opacity: 0; }
+.cursor[data-mode='abstraction'] .cursor__dot {
+  width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  background: #1a56db;
+  transform-origin: center;
+}
+.cursor[data-mode='abstraction'].is-hover .cursor__dot { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+.cursor[data-mode='abstraction'] .cursor__label { color: #1a56db; text-shadow: none; }
+/* Multiply with the page, so whatever the dot covers still reads through it. */
+.cursor[data-mode='abstraction'] { mix-blend-mode: multiply; }
+/* The menu is dark: multiply would swallow the dot, so invert it instead. */
+html.menu-open .cursor[data-mode='abstraction'] { mix-blend-mode: normal; filter: invert(1); }
+
+/* ── Inheritance: a parent and the children who follow it ─────────────── */
+.cursor[data-mode='inheritance'] .cursor__ring { opacity: 0; }
+.cursor[data-mode='inheritance'] .cursor__chain { opacity: 1; }
+.cursor[data-mode='inheritance'] .cursor__dot { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; background: #e8e0d0; box-shadow: 0 0 10px rgba(201, 230, 184, 0.6); }
+.cursor__chain { inset: 0; position: absolute; }
+.cursor__chain span {
+  position: absolute; left: 0; top: 0;
+  border-radius: 50%;
+  background: #5f9a52;
+  will-change: transform;
+}
+.cursor__chain span:nth-child(1) { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; opacity: 0.85; }
+.cursor__chain span:nth-child(2) { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; opacity: 0.6; }
+.cursor__chain span:nth-child(3) { width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; opacity: 0.4; }
+.cursor[data-mode='inheritance'].is-hover .cursor__dot {
+  width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px #e8e0d0, 0 0 12px rgba(201, 230, 184, 0.4);
+}
+
+/* ── Polymorphism: same pointer, never the same shape ──────────────────── */
+.cursor[data-mode='polymorphism'] .cursor__ring { opacity: 0; }
+.cursor[data-mode='polymorphism'] .cursor__shape { opacity: 1; }
+.cursor[data-mode='polymorphism'] .cursor__dot { opacity: 0; }
+.cursor__shape {
+  --hue: 0deg;
+  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  overflow: visible;
+  filter: hue-rotate(var(--hue)) drop-shadow(0 0 8px rgba(217, 70, 239, 0.6));
+}
+.cursor__shape path {
+  fill: none;
+  stroke: #e879f9;
+  stroke-width: 1.6;
+  transform-origin: 12px 12px;
+  transform: scale(var(--press));
+  transition: transform 0.6s var(--ease);
+}
+.cursor[data-mode='polymorphism'].is-hover .cursor__shape path { fill: rgba(232, 121, 249, 0.25); transform: scale(calc(1.6 * var(--press))); }
+.cursor[data-mode='polymorphism'] .cursor__label { color: #f5d0fe; }
