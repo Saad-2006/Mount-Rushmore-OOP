@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
-import { MONUMENTS, CREDIT } from '../config.js';
+import { MONUMENTS } from '../config.js';
 import { cursor } from './cursor.js';
 import { audio } from '../audio/engine.js';
 import { reveals, typeIn, revertSplits } from './text-fx.js';
 import { reducedMotion } from '../motion.js';
 
 
-export function createHub({ stage, mountain, rig, sky, onEnter }) {
+export function createHub({ stage, mountain, rig, sky, skyWord, onEnter }) {
   const root = document.querySelector('#hub');
   const $ = (s) => root.querySelector(s);
   const line = $('[data-intro-line]');
@@ -18,12 +18,9 @@ export function createHub({ stage, mountain, rig, sky, onEnter }) {
   const labelLine = $('[data-label-line]');
   const nav = $('[data-nav]');
   const list = $('[data-nav-list]');
-  const credit = $('[data-credit]');
 
   const touch = matchMedia('(pointer: coarse)').matches;
 
-  credit.href = CREDIT.url;
-  credit.textContent = `${CREDIT.text} · ${CREDIT.license}`;
 
   const items = MONUMENTS.map((m, i) => {
     const li = document.createElement('li');
@@ -111,8 +108,7 @@ export function createHub({ stage, mountain, rig, sky, onEnter }) {
       .to(sky.uniforms.uReveal, { value: 1, duration: 4, ease: 'power2.inOut' }, 0.2)
       .to(stage.scene.fog, { density: 0.0035, duration: 4.5, ease: 'power2.inOut' }, 0.2)
       .set(nav, { visibility: 'visible' }, '-=1.2')
-      .to(nav, { opacity: 1, duration: 1.2, ease: 'power2.out' }, '<')
-      .to(credit, { opacity: 1, duration: 1.2 }, '<');
+      .to(nav, { opacity: 1, duration: 1.2, ease: 'power2.out' }, '<');
     await tl;
     if (state === 'approaching') setState('hub');
   }
@@ -123,6 +119,7 @@ export function createHub({ stage, mountain, rig, sky, onEnter }) {
     active = i;
     mountain.setHover(i);
     items.forEach((b, j) => b.setAttribute('aria-current', String(j === i)));
+    skyWord.then((w) => w.tint(i === -1 ? null : MONUMENTS[i].color));
     if (i === -1) return hideLabel();
     audio.blip(i);
     const m = MONUMENTS[i];
@@ -208,11 +205,11 @@ export function createHub({ stage, mountain, rig, sky, onEnter }) {
     setState('away');
     stage.renderer.domElement.style.cursor = '';
     cursor.unhover();
-    gsap.to([nav, label, credit], { opacity: 0, duration: 0.6 });
+    gsap.to([nav, label], { opacity: 0, duration: 0.6 });
   }
 
   function restore(i = active) {
-    gsap.to([nav, credit], { opacity: 1, duration: 1 });
+    gsap.to(nav, { opacity: 1, duration: 1 });
     setState('hub');
     active = -1;
     if (i !== -1) select(i);

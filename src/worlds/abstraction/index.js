@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import * as car from './car.js';
+import { monumentWord } from '../../ui/monument-word.js';
 import './abstraction.css';
 import { reducedMotion } from '../../motion.js';
 
@@ -23,10 +24,10 @@ export default function mount(shell) {
   const stage = document.createElement('section');
   stage.className = 'abs';
   stage.innerHTML = `
-    <p class="abs__meta mono">Monument II · Designed simplicity</p>
-    <div class="abs__caption mono" aria-live="polite">
-      <span class="abs__n" data-n>01</span>
-      <span class="abs__name" data-name>The machine</span>
+    <p class="abs__meta label">Monument II · Designed simplicity</p>
+    <div class="abs__caption" aria-live="polite">
+      <span class="abs__n mono" data-n>01</span>
+      <span class="abs__name label" data-name>The machine</span>
       <span class="abs__note" data-note>30,000 parts. You see a car.</span>
     </div>
     <ol class="abs__ticks mono" aria-hidden="true">
@@ -36,12 +37,19 @@ export default function mount(shell) {
       ${STAGES.map((s, i) => `<div class="abs__layer" data-layer="${i}">${s.svg}</div>`).join('')}
       <div class="abs__scan" data-scan aria-hidden="true"></div>
     </div>
-    <h1 class="abs__title" data-title>Abstraction</h1>
-    <p class="abs__line mono" data-line>You don’t need to know how the engine works to drive.</p>
-    <p class="abs__hint mono" data-hint>Scroll to simplify</p>
+    <h1 class="sr-only">Abstraction</h1>
+    <p class="abs__line voice" data-line>You don’t need to know how the engine works to drive.</p>
+    <p class="abs__hint label" data-hint>Scroll to simplify</p>
   `;
   body.append(stage);
   const $ = (s) => stage.querySelector(s);
+
+  // The monument word sits on drafting paper, barely there behind the
+  // machine. As the car simplifies, the word comes into focus: ink, sharp,
+  // the clearest thing on the page.
+  const word = monumentWord('Abstraction', { material: 'paper', className: 'abs__word' });
+  stage.prepend(word.el);
+  shell.onCleanup(word.destroy);
   const layers = [...stage.querySelectorAll('[data-layer]')];
   const ticks = [...stage.querySelectorAll('[data-tick]')];
 
@@ -63,7 +71,6 @@ export default function mount(shell) {
   }
 
   ctx.add(() => {
-    const titleChars = SplitText.create($('[data-title]'), { type: 'chars', charsClass: 'char' }).chars;
     const lineWords = SplitText.create($('[data-line]'), { type: 'words', wordsClass: 'word' }).words;
     const scan = $('[data-scan]');
     const frame = $('.abs__frame');
@@ -74,7 +81,7 @@ export default function mount(shell) {
     ticks[0].classList.add('on');
     gsap.set(layers.slice(1), { clipPath: 'inset(0% 100% 0% 0%)' });
     gsap.set(scan, { x: 0, opacity: 0 });
-    gsap.set(titleChars, { opacity: 0, filter: 'blur(16px)', scale: 1.1 });
+    gsap.set(word.wake, { opacity: 0, filter: 'blur(18px)' });
     gsap.set(lineWords, { opacity: 0, y: 10 });
 
     const tl = gsap.timeline({
@@ -109,12 +116,14 @@ export default function mount(shell) {
 
     // The idea: the circle settles; understanding clicks.
     tl.fromTo(layers[4].querySelector('circle'), { scale: 1.15, transformOrigin: '50% 50%' }, { scale: 1, duration: 1.2 }, 8.6)
-      .to(titleChars, { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.4, stagger: 0.12 }, 9.0)
+      .to(word.wake, { opacity: 1, filter: 'blur(0px)', duration: 1.8, ease: 'expo.out' }, 8.8)
       .to(lineWords, { opacity: 1, y: 0, duration: 0.8, stagger: 0.18 }, 10.6)
       .to({}, { duration: 0.8 });
   });
 
   shell.coda({
+    keyword: 'interface',
+    material: 'paper',
     statement: 'Not ignorance.<br />Designed simplicity.',
     code: [
       `<span><b class="k">interface</b> <b class="pub">Drivable</b> {</span>`,

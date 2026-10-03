@@ -12,19 +12,19 @@ export function createMenu({ onGo, onOpen, onClose }) {
   el.setAttribute('aria-modal', 'true');
   el.setAttribute('aria-label', 'Index');
   el.innerHTML = `
-    <button class="menu__close mono" data-menu-close data-magnetic><span data-magnetic-inner>Close</span></button>
-    <p class="menu__kicker mono">Index</p>
+    <button class="menu__close label" data-menu-close data-magnetic><span data-magnetic-inner>Close</span></button>
+    <p class="menu__kicker label">Index</p>
     <ol class="menu__list">
       <li><button class="menu__item" data-go="" style="--c: var(--bone)">
-        <span class="menu__num mono">0</span><span class="menu__name">The Mountain</span><span class="menu__face mono">All four</span>
+        <span class="menu__num mono">0</span><span class="menu__name">The Mountain</span><span class="menu__face label">All four</span>
       </button></li>
       ${MONUMENTS.map(
         (m) => `<li><button class="menu__item" data-go="${m.id}" style="--c: var(--${m.id})">
-          <span class="menu__num mono">${m.numeral}</span><span class="menu__name">${m.name}</span><span class="menu__face mono">${m.face}</span>
+          <span class="menu__num mono">${m.numeral}</span><span class="menu__name">${m.name}</span><span class="menu__face label">${m.face}</span>
         </button></li>`
       ).join('')}
     </ol>
-    <p class="menu__foot mono">Esc to close</p>
+    <p class="menu__foot label">Esc to close</p>
   `;
   document.body.append(el);
   magnetize(el);

@@ -29,12 +29,21 @@
 
 .inh__meta {
   position: absolute;
-  top: calc(var(--gutter) + 40px);
+  top: calc(var(--gutter) + 48px);
   left: var(--gutter);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: var(--moss-lit);
+}
+
+.inh__word {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 17vh;
+  padding: 0 var(--gutter);
+  --mw-alpha: 0.16;
+  --mw-tint: rgba(45, 90, 39, 0.35);
+  /* Signed in bone, but quietly: the youngest generation stands in front. */
+  --mw-wake-tint: rgba(232, 224, 208, 0.5);
 }
 
 .inh__tree {
@@ -109,6 +118,8 @@
   white-space: nowrap;
 }
 .inh__own { color: var(--fg); }
+/* A halo of forest-black keeps every trait legible over the word. */
+.inh__traits, .inh__name { text-shadow: 0 0 6px #050a05, 0 0 12px #050a05, 0 0 2px #050a05; }
 .inh__inherited { color: var(--moss-lit); font-size: 10px; }
 .inh__from {
   color: rgba(232, 224, 208, 0.35);
@@ -121,45 +132,34 @@
 .inh__override { font-size: 10px; color: #d9a77a; }
 .inh__override span { color: rgba(232, 224, 208, 0.35); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-.inh__title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 9vh;
-  text-align: center;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-style: italic;
-  font-size: clamp(44px, 9.4vw, 190px);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-}
-
 .inh__line {
   position: absolute;
   left: var(--gutter);
-  bottom: var(--gutter);
-  font-size: 14px;
-  line-height: 1.6;
-  color: rgba(232, 224, 208, 0.6);
+  bottom: calc(var(--gutter) + 40px);
+  max-width: 24ch;
+  color: rgba(232, 224, 208, 0.72);
 }
 
 .inh__hint {
   position: absolute;
   left: 50%;
-  bottom: var(--gutter);
+  bottom: calc(var(--gutter) + 40px);
   transform: translateX(-50%);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: rgba(232, 224, 208, 0.4);
 }
+
+/* Coda: the forest hands over to bone. */
+.world--inheritance .coda {
+  --coda-bg: #e8e0d0;
+  --coda-fg: #0b130a;
+  --accent: #2d5a27;
+}
+.world--inheritance .coda__word { --mw-alpha: 0.16; }
 
 @media (max-width: 720px) {
   .inh__tree { top: 20vh; width: 96vw; }
   .inh__traits { display: none; }
   .inh__name { font-size: 15px; }
-  .inh__title { bottom: 20vh; font-size: 12vw; }
-  .inh__line { font-size: 12px; }
-  .inh__hint { bottom: calc(var(--gutter) + 70px); }
+  .inh__word { bottom: 22vh; }
+  .inh__hint { display: none; }
 }

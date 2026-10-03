@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { monumentWord } from '../../ui/monument-word.js';
 import './inheritance.css';
 import { reducedMotion } from '../../motion.js';
 
@@ -69,7 +70,7 @@ export default function mount(shell) {
     <svg class="inh__rings" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       ${Array.from({ length: 14 }, (_, i) => `<ellipse cx="500" cy="-80" rx="${120 + i * 70 + (i % 3) * 9}" ry="${100 + i * 64}" />`).join('')}
     </svg>
-    <p class="inh__meta mono">Monument III · The lineage</p>
+    <p class="inh__meta label">Monument III · The lineage</p>
     <div class="inh__tree">
       <svg class="inh__svg" viewBox="0 0 1000 560" aria-hidden="true">
         <g class="inh__edges">
@@ -79,11 +80,16 @@ export default function mount(shell) {
       </svg>
       ${ids.map(card).join('')}
     </div>
-    <h1 class="inh__title" data-title>Inheritance</h1>
-    <p class="inh__line mono" data-line>You don’t start from nothing.<br />You stand on what came before.</p>
-    <p class="inh__hint mono" data-hint>Scroll to grow</p>
+    <h1 class="sr-only">Inheritance</h1>
+    <p class="inh__line voice" data-line>You don’t start from nothing. You stand on what came before.</p>
+    <p class="inh__hint label" data-hint>Scroll to grow</p>
   `;
   body.append(stage);
+
+  // INHERITANCE in the grain of old wood, low behind the youngest generation.
+  const word = monumentWord('Inheritance', { material: 'wood', className: 'inh__word' });
+  stage.querySelector('.inh__rings').after(word.el);
+  shell.onCleanup(word.destroy);
   const $ = (s) => stage.querySelector(s);
   const node = (id) => stage.querySelector(`[data-node="${id}"]`);
   const edgeEls = [...stage.querySelectorAll('[data-edge]')];
@@ -146,7 +152,7 @@ export default function mount(shell) {
     gsap.set(nodes, { opacity: 0, scale: 0.7 });
     gsap.set(stage.querySelectorAll('.inh__inherited, .inh__override'), { opacity: 0, x: -6 });
     gsap.set(edgeEls, { attr: { 'stroke-dashoffset': 1 } });
-    gsap.set($('[data-title]'), { clipPath: 'inset(-20% 100% -20% 0%)' });
+    gsap.set(word.wake, { opacity: 0.34, clipPath: 'inset(-20% 100% -20% 0%)' });
     gsap.set($('[data-line]'), { opacity: 0, y: 14 });
 
     const tl = gsap.timeline({
@@ -193,12 +199,15 @@ export default function mount(shell) {
       at += 2.0;
     });
 
-    tl.to($('[data-title]'), { clipPath: 'inset(-20% 0% -20% 0%)', duration: 1.6 }, at + 0.4)
+    // Signed, left to right, in bone over the grain.
+    tl.to(word.wake, { clipPath: 'inset(-20% 0% -20% 0%)', duration: 1.8 }, at + 0.4)
       .to($('[data-line]'), { opacity: 1, y: 0, duration: 0.8 }, at + 1.8)
       .to({}, { duration: 0.8 });
   });
 
   shell.coda({
+    keyword: 'extends',
+    material: 'wood',
     statement: 'Inherit the past.<br />Override what you must.',
     code: [
       `<span><b class="k">class</b> <b class="pub">Animal</b> { <b class="pub">breathe</b>() {} }</span>`,

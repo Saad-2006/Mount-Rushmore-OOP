@@ -1,11 +1,10 @@
 import gsap from 'gsap';
-import { SplitText } from 'gsap/SplitText';
 import { gearTrain, wiring, circuit, memory } from './machinery.js';
 import { audio } from '../../audio/engine.js';
+import { monumentWord } from '../../ui/monument-word.js';
 import './encapsulation.css';
 import { reducedMotion } from '../../motion.js';
 
-gsap.registerPlugin(SplitText);
 
 const AMBER = '#F5A623';
 const WHITE = '#F0F0F0';
@@ -51,13 +50,19 @@ export default function mount(shell) {
       </div>
     </div>
 
-    <p class="enc__meta mono" data-meta>Monument I · The black box</p>
-    <h1 class="enc__title" data-title>Encapsulation</h1>
-    <p class="enc__line mono" data-line>The complexity is real.<br />You just don’t have to see it.</p>
-    <p class="enc__hint mono" data-hint>Scroll to open</p>
+    <p class="enc__meta label" data-meta>Monument I · The black box</p>
+    <h1 class="sr-only">Encapsulation</h1>
+    <p class="enc__line voice" data-line>The complexity is real. You just don’t have to see it.</p>
+    <p class="enc__hint label" data-hint>Scroll to open</p>
   `;
   body.append(stage);
   const $ = (s) => stage.querySelector(s);
+
+  // The monument word: cold machined steel, until the box opens and the light
+  // inside catches every letter. When it closes, the steel goes cold again.
+  const word = monumentWord('Encapsulation', { material: 'steel', className: 'enc__word' });
+  stage.prepend(word.el);
+  shell.onCleanup(word.destroy);
 
   // ── Fill the inside ──────────────────────────────────────
   const backGears = gearTrain(
@@ -126,9 +131,7 @@ export default function mount(shell) {
   shell.onCleanup(() => gsap.ticker.remove(tick));
 
   // ── The scroll story ─────────────────────────────────────
-  let titleChars;
   ctx.add(() => {
-    titleChars = SplitText.create($('[data-title]'), { type: 'chars', charsClass: 'char' }).chars;
     const cube = $('[data-cube]');
     const pivot = $('[data-pivot]');
     const door = $('[data-door]');
@@ -136,7 +139,6 @@ export default function mount(shell) {
     gsap.set(stage, { '--leak': 0.2, '--inside': 0 });
     gsap.set(cube, { rotateX: -10, rotateY: -36 });
     gsap.set(door, { transformOrigin: '0% 50%' });
-    gsap.set(titleChars, { yPercent: -120, opacity: 0 });
     gsap.set($('[data-line]'), { opacity: 0, y: 16 });
     gsap.set(labels, { opacity: 0 });
 
@@ -164,7 +166,8 @@ export default function mount(shell) {
       .to($('[data-glow]'), { opacity: 1, scale: 1, duration: 2.2 }, 1.8)
       .to($('[data-spill]'), { opacity: 1, scaleX: 1, duration: 2.2 }, 1.9)
       .to(wirePaths, { attr: { 'stroke-dashoffset': 0 }, duration: 2.2, stagger: 0.06, ease: 'power2.inOut' }, 2.0)
-      .to(titleChars, { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.09 }, 2.2)
+      .to(word.wake, { opacity: 0.85, duration: 1.8, ease: 'power2.out' }, 2.0)
+      .fromTo(word.el, { scale: 1 }, { scale: 1.04, duration: 4.6, ease: 'none' }, 2.0)
 
       // Lean in. Look at it all.
       .to(pivot, { scale: 1.2, y: '-4%', duration: 2.2, ease: 'power2.inOut' }, 3.9)
@@ -177,6 +180,8 @@ export default function mount(shell) {
       .to(door, { rotateY: 0, duration: 2.0, ease: 'power3.inOut' }, 6.7)
       .to(stage, { '--inside': 0, '--leak': 0.35, duration: 1.8, ease: 'power2.in' }, 6.8)
       .to(drive, { inside: 0, speed: 0.4, duration: 1.8 }, 6.8)
+      .to(word.wake, { opacity: 0, duration: 1.6, ease: 'power2.in' }, 6.8)
+      .to(word.el, { scale: 1, duration: 1.8, ease: 'power2.inOut' }, 6.8)
       .to($('[data-glow]'), { opacity: 0, scale: 0.8, duration: 1.8, ease: 'power2.in' }, 6.8)
       .to($('[data-spill]'), { opacity: 0, scaleX: 0.6, duration: 1.8, ease: 'power2.in' }, 6.8)
       .to(pivot, { scale: 1, y: '0%', duration: 2.2, ease: 'power2.inOut' }, 6.9)
@@ -188,6 +193,8 @@ export default function mount(shell) {
   });
 
   shell.coda({
+    keyword: 'private',
+    material: 'steel',
     statement: 'Hide the how.<br />Expose the what.',
     code: [
       `<span><b class="k">class</b> <b class="pub">Vault</b> {</span>`,

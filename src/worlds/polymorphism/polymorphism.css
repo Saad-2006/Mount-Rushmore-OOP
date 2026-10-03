@@ -34,11 +34,8 @@
 
 .poly__meta {
   position: absolute;
-  top: calc(var(--gutter) + 40px);
+  top: calc(var(--gutter) + 48px);
   left: var(--gutter);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: rgba(247, 240, 255, 0.75);
 }
 
@@ -94,12 +91,7 @@
 }
 .poly__card--left { left: var(--gutter); }
 .poly__card--right { right: var(--gutter); }
-.poly__card-k {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(247, 240, 255, 0.6);
-}
+.poly__card-k { color: rgba(247, 240, 255, 0.6); }
 .poly__card-v {
   font-family: var(--serif);
   font-size: clamp(30px, 3.4vw, 52px);
@@ -109,56 +101,45 @@
 }
 
 /* The undecided word */
-.poly__title {
+.poly__word {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 9vh;
-  text-align: center;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(40px, 9vw, 180px);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
+  top: 40%;
+  transform: translateY(-50%);
+  padding: 0 var(--gutter);
+  --mw-alpha: 0.22;
+  --mw-tint: rgba(217, 70, 239, 0.25);
+  --mw-wake-tint: rgba(247, 240, 255, 0.55);
 }
-.poly__title .char {
-  display: inline-block;
-  min-width: 0.42em;
-  font-family: var(--mono);
-  font-size: 0.72em;
-  color: rgba(247, 240, 255, 0.55);
-}
-.poly__title .char.on {
-  font-family: var(--serif);
-  font-size: 1em;
-  min-width: 0;
-  color: var(--fg);
-}
+.poly__word .char { display: inline-block; text-align: center; }
 
 .poly__line {
   position: absolute;
   left: var(--gutter);
-  bottom: var(--gutter);
-  font-size: 14px;
-  color: rgba(247, 240, 255, 0.7);
+  bottom: calc(var(--gutter) + 40px);
+  color: rgba(247, 240, 255, 0.78);
 }
 
 .poly__hint {
   position: absolute;
   left: 50%;
-  bottom: var(--gutter);
+  bottom: calc(var(--gutter) + 40px);
   transform: translateX(-50%);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: rgba(247, 240, 255, 0.45);
 }
+
+/* Coda: after the storm, pale lavender — the last trace of colour. */
+.world--polymorphism .coda {
+  --coda-bg: #f3ecff;
+  --coda-fg: #12051f;
+  --accent: #b02ad0;
+}
+.world--polymorphism .coda__word { --mw-alpha: 0.16; --mw-tint: rgba(176, 42, 208, 0.35); }
 
 @media (max-width: 720px) {
   .poly__stage { top: 38%; width: 62vw; }
   .poly__card { top: auto; bottom: 34vh; min-width: 0; padding: 14px 18px; }
-  .poly__title { bottom: 20vh; font-size: 11vw; }
-  .poly__line { font-size: 12px; }
-  .poly__hint { bottom: calc(var(--gutter) + 70px); }
+  .poly__word { top: 38%; }
+  .poly__hint { display: none; }
 }
