@@ -121,7 +121,8 @@ export default function mount(shell) {
       .to({}, { duration: 0.8 });
   });
 
-  shell.coda({
+  // The coda is ink on a light world: the cursor inverts over it.
+  const coda = shell.coda({
     keyword: 'interface',
     material: 'paper',
     statement: 'Not ignorance.<br />Designed simplicity.',
@@ -136,6 +137,7 @@ export default function mount(shell) {
       `<span><b class="c">// behind the interface. Not your problem.</b></span>`,
     ].join(''),
   });
+  coda.dataset.cursorInvert = '';
 
   return {
     enter() {

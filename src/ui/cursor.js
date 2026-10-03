@@ -99,6 +99,14 @@ function createCursor() {
       dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     }
 
+    // Over a surface that asks for it (a dark panel in a light world), invert.
+    // Hit-tested every frame, so it flips exactly at a slanted clip-path edge
+    // and when the page scrolls under a still pointer.
+    if (mode === 'abstraction') {
+      const under = document.elementFromPoint(mouse.x, mouse.y);
+      el.classList.toggle('is-inverted', !!under?.closest('[data-cursor-invert]'));
+    }
+
     // Inheritance: each child follows its parent, not the mouse.
     let parent = mouse;
     chainP.forEach((p, i) => {
@@ -123,6 +131,7 @@ function createCursor() {
     if (next === mode) return;
     mode = next;
     el.dataset.mode = next;
+    el.classList.remove('is-inverted');
     calm = false;
     if (next === 'polymorphism') {
       polyIndex = 0;

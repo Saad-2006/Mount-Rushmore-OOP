@@ -89,7 +89,8 @@ html.has-cursor * { cursor: none !important; }
 /* Multiply with the page, so whatever the dot covers still reads through it. */
 .cursor[data-mode='abstraction'] { mix-blend-mode: multiply; }
 /* The menu is dark: multiply would swallow the dot, so invert it instead. */
-html.menu-open .cursor[data-mode='abstraction'] { mix-blend-mode: normal; filter: invert(1); }
+html.menu-open .cursor[data-mode='abstraction'],
+.cursor[data-mode='abstraction'].is-inverted { mix-blend-mode: normal; filter: invert(1); }
 
 /* ── Inheritance: a parent and the children who follow it ─────────────── */
 .cursor[data-mode='inheritance'] .cursor__ring { opacity: 0; }
