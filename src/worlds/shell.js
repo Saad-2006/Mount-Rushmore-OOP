@@ -6,6 +6,7 @@ import { SplitText } from 'gsap/SplitText';
 import { MONUMENTS } from '../config.js';
 import { reducedMotion, finePointer } from '../motion.js';
 import { monumentWord } from '../ui/monument-word.js';
+import { SURFACE } from '../ui/curtain.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -79,9 +80,17 @@ export function createShell({ monument, onBack, onNext, onLine }) {
           <p class="coda__statement">${statement}</p>
           ${code ? `<div class="coda__code"><p class="coda__label label">In code</p><pre class="mono"><code>${code}</code></pre></div>` : ''}
         </div>
-        <nav class="coda__nav label">
-          <button data-coda-back data-magnetic="0.2"><span aria-hidden="true">←</span> Return to the mountain</button>
-          <button data-coda-next data-magnetic="0.2">Next · <span class="coda__next-num">${next.numeral}</span> ${next.name} <span aria-hidden="true">→</span></button>
+        <nav class="coda__nav">
+          <button class="coda__next" data-coda-next data-cursor="Go" style="--n-bg: ${SURFACE[next.id].bg}; --n-accent: ${SURFACE[next.id].accent}">
+            <span class="coda__next-fill" aria-hidden="true"></span>
+            <span class="coda__next-label label">Next monument</span>
+            <span class="coda__next-row">
+              <span class="coda__next-num">${next.numeral}</span>
+              <span class="coda__next-name">${next.name}</span>
+              <span class="coda__next-arrow" aria-hidden="true">→</span>
+            </span>
+          </button>
+          <button class="coda__back label" data-coda-back><span aria-hidden="true">←</span> Return to the mountain</button>
         </nav>
       </div>`;
     const word = monumentWord(keyword, { material, className: 'coda__word' });

@@ -6,11 +6,13 @@ import { monumentWord } from './monument-word.js';
 // Between worlds: an angled panel in the next world's colour sweeps up over
 // the screen carrying that world's name, holds while the swap happens behind
 // it, then carries on up and away.
-const SURFACE = {
-  encapsulation: { bg: '#0d0d0d', wake: 'rgba(245, 166, 35, 0.62)', mat: 'steel' },
-  abstraction: { bg: '#f4f4f2', wake: 'rgba(26, 86, 219, 0.82)', mat: 'paper' },
-  inheritance: { bg: '#050a05', wake: 'rgba(232, 224, 208, 0.55)', mat: 'wood' },
-  polymorphism: { bg: '#1a0a2e', wake: 'rgba(217, 70, 239, 0.7)', mat: 'halftone' },
+// Each world's surface, shared with the coda's Next button so the hover
+// previews exactly the slab the curtain will be.
+export const SURFACE = {
+  encapsulation: { bg: '#0d0d0d', fg: '#f0f0f0', accent: '#f5a623', wake: 'rgba(245, 166, 35, 0.62)', mat: 'steel' },
+  abstraction: { bg: '#f4f4f2', fg: '#0a0a0a', accent: '#1a56db', wake: 'rgba(26, 86, 219, 0.82)', mat: 'paper' },
+  inheritance: { bg: '#050a05', fg: '#e8e0d0', accent: '#7fbf6e', wake: 'rgba(232, 224, 208, 0.55)', mat: 'wood' },
+  polymorphism: { bg: '#1a0a2e', fg: '#f7f0ff', accent: '#e879f9', wake: 'rgba(217, 70, 239, 0.7)', mat: 'halftone' },
 };
 
 export function createCurtain() {

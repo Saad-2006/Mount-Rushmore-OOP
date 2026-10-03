@@ -90,30 +90,105 @@ html[data-world='abstraction'] .grain { filter: invert(1); opacity: 0.05; }
 .coda__code .pub { color: var(--coda-fg); }
 .coda__code .c { color: color-mix(in srgb, var(--coda-fg) 34%, transparent); font-style: italic; }
 .coda__nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--s2) var(--s6);
-  padding-top: var(--s3);
-  border-top: 1px solid color-mix(in srgb, var(--coda-fg) 12%, transparent);
+  display: grid;
+  gap: var(--s3);
 }
-.coda__nav button { position: relative; padding: 10px 0; }
-.coda__nav button::after {
+
+/* The way forward: the biggest thing on the coda after the keyword. On hover
+   an angled slab in the next world's accent sweeps across it, the type taking
+   that world's ground colour — a promise of where the click goes. */
+@property --sweep {
+  syntax: '<number>';
+  inherits: true; /* the fill reads it from the button */
+  initial-value: 0;
+}
+.coda__next {
+  --sweep: 0;
+  position: relative;
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s4) var(--s3) var(--s3);
+  margin: 0 calc(var(--s3) * -1);
+  width: calc(100% + var(--s3) * 2);
+  text-align: left;
+  border-top: 1px solid color-mix(in srgb, var(--coda-fg) 14%, transparent);
+  isolation: isolate;
+  overflow: hidden;
+  transition: --sweep 0.9s var(--ease), color 0.5s var(--ease);
+}
+.coda__next-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--n-accent);
+  clip-path: polygon(
+    0 0,
+    calc(var(--sweep) * (100% + 12vw)) 0,
+    calc(var(--sweep) * (100% + 12vw) - 12vw) 100%,
+    0 100%
+  );
+}
+.coda__next-label { color: var(--accent); transition: color 0.5s var(--ease); }
+.coda__next-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(56px, 10.5vw, 180px);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+}
+.coda__next-num {
+  font-weight: 300;
+  font-size: 0.42em;
+  color: var(--accent);
+  align-self: flex-start;
+  margin-top: 0.12em;
+  transition: color 0.5s var(--ease);
+}
+.coda__next-name { flex: 1; }
+.coda__next-arrow {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.6em;
+  transition: transform 0.8s var(--ease);
+}
+.coda__next:hover,
+.coda__next:focus-visible { --sweep: 1; color: var(--n-bg); }
+.coda__next:hover .coda__next-label,
+.coda__next:hover .coda__next-num,
+.coda__next:focus-visible .coda__next-label,
+.coda__next:focus-visible .coda__next-num { color: var(--n-bg); }
+.coda__next:hover .coda__next-arrow,
+.coda__next:focus-visible .coda__next-arrow { transform: translateX(0.22em); }
+
+/* Back: quiet, small, still there. */
+.coda__back {
+  justify-self: start;
+  position: relative;
+  padding: 8px 0;
+  opacity: 0.6;
+  transition: opacity 0.4s var(--ease);
+}
+.coda__back:hover { opacity: 1; }
+.coda__back::after {
   content: '';
   position: absolute;
-  left: 0; right: 0; bottom: 0;
+  left: 0; right: 0; bottom: 4px;
   height: 1px;
-  background: var(--accent);
+  background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.8s var(--ease);
 }
-.coda__nav button:hover::after { transform: scaleX(1); transform-origin: left; }
-.coda__next-num { color: var(--accent); }
+.coda__back:hover::after { transform: scaleX(1); transform-origin: left; }
 .coda__statement .hop { display: inline-block; will-change: transform; }
 
 @media (max-width: 860px) {
   .coda__grid { grid-template-columns: 1fr; }
+  .coda__next-row { font-size: 12.5vw; }
 }
 
 /* ── Menu ──────────────────────────────────────────────── */
