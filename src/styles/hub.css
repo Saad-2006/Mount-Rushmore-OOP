@@ -21,41 +21,40 @@
 .intro__line {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 4.2vw, 64px);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  max-width: 16ch;
+  font-size: clamp(36px, 5.2vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  max-width: 15ch;
 }
 .intro__line .char { display: inline-block; opacity: 0; }
+
 /* ── Monument label (on hover / focus) ─────────────────── */
-.label {
+.hlabel {
   position: absolute;
   left: var(--gutter);
-  bottom: calc(var(--gutter) + 8px);
+  bottom: calc(var(--gutter) + 40px);
   max-width: calc(100% - 2 * var(--gutter));
   pointer-events: none;
 }
-.label__meta {
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.hlabel__meta {
   color: var(--accent);
-  margin-bottom: 10px;
+  margin-bottom: var(--s2);
   opacity: 0;
 }
-.label__name {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(52px, 10.5vw, 200px);
-  line-height: 0.86;
-  letter-spacing: -0.045em;
+.hlabel__name {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(64px, 13vw, 240px);
+  line-height: 0.8;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  margin-left: -0.03em;
 }
-.label__name .char { display: inline-block; will-change: transform, opacity; }
-.label__line {
-  margin-top: 18px;
-  max-width: 34ch;
-  font-size: 14px;
+.hlabel__name .char { display: inline-block; will-change: transform, opacity; }
+.hlabel__line {
+  margin-top: var(--s3);
+  max-width: 26ch;
   color: var(--dim);
   opacity: 0;
 }
@@ -70,9 +69,6 @@
   visibility: hidden;
 }
 .monuments__prompt {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: var(--faint);
   margin-bottom: 14px;
 }
@@ -98,31 +94,15 @@
 .monuments__item:focus-visible { color: var(--bone); }
 .monuments__item[aria-current='true'] .num { color: var(--c); }
 
-/* ── Credit (CC BY attribution) ────────────────────────── */
-.credit {
-  position: absolute;
-  top: var(--gutter);
-  right: var(--gutter);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: var(--faint);
-  text-decoration: none;
-  opacity: 0;
-  transition: color 0.3s;
-}
-.credit:hover { color: var(--dim); }
-
 /* ── States ────────────────────────────────────────────── */
-.hub[data-state='intro'] .credit,
 .hub[data-state='intro'] .monuments { pointer-events: none; }
 
 @media (max-width: 720px) {
-  .label { bottom: 172px; }
-  .label__line { display: none; }
+  .hlabel { bottom: 172px; }
+  .hlabel__line { display: none; }
   .monuments { left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 40px); text-align: left; }
   .monuments__prompt { display: none; }
   .monuments__list { grid-template-columns: 1fr 1fr; gap: 2px 12px; }
   .monuments__item { gap: 10px; font-size: 12px; letter-spacing: 0.03em; padding: 6px 0; }
   .monuments__item .num { width: 2em; text-align: left; }
-  .credit { font-size: 9px; left: var(--gutter); text-align: right; }
 }

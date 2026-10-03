@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import { cursor } from '../../ui/cursor.js';
 import { audio } from '../../audio/engine.js';
+import { monumentWord } from '../../ui/monument-word.js';
 import './polymorphism.css';
 import { reducedMotion } from '../../motion.js';
 
@@ -41,7 +42,7 @@ export default function mount(shell) {
       <div class="poly__wash poly__wash--magenta" data-wash="1"></div>
       <div class="poly__wash poly__wash--black" data-wash="2"></div>
     </div>
-    <p class="poly__meta mono">Monument IV · The shapeshifter</p>
+    <p class="poly__meta label">Monument IV · The shapeshifter</p>
 
     <div class="poly__stage" data-jitter>
       <svg class="poly__svg" viewBox="0 0 400 400" aria-hidden="true">
@@ -74,14 +75,14 @@ export default function mount(shell) {
     ${CONTEXTS.map(
       (c, i) => `
       <aside class="poly__card poly__card--${c.side}" data-card="${i}">
-        <p class="poly__card-k mono">context</p>
+        <p class="poly__card-k label">context</p>
         <p class="poly__card-v">${c.label}</p>
       </aside>`
     ).join('')}
 
-    <h1 class="poly__title" data-title aria-label="Polymorphism"></h1>
-    <p class="poly__line mono" data-line>Same name. Different worlds.</p>
-    <p class="poly__hint mono" data-hint>Scroll to change context</p>
+    <h1 class="sr-only">Polymorphism</h1>
+    <p class="poly__line voice" data-line>Same name. Different worlds.</p>
+    <p class="poly__hint label" data-hint>Scroll to change context</p>
   `;
   body.append(stage);
   const $ = (s) => stage.querySelector(s);
@@ -98,12 +99,34 @@ export default function mount(shell) {
     shadow: $('[data-deco="shadow"]'),
   };
 
-  // Title: one span per letter, each undecided until the scroll decides it.
+  // The monument word, in halftone, behind the shape — and it can't decide
+  // what it is either. Each letter cycles through glyphs until the scroll
+  // resolves it; when all have, the word lights up.
   const word = 'Polymorphism';
-  const title = $('[data-title]');
-  title.innerHTML = [...word].map(() => `<span class="char" aria-hidden="true"></span>`).join('');
-  const chars = [...title.children];
+  const mw = monumentWord(word, { material: 'halftone', className: 'poly__word' });
+  stage.querySelector('.poly__bg').after(mw.el);
+  shell.onCleanup(mw.destroy);
+  const slots = [...word].map((ch) => `<span class="char">${ch}</span>`).join('');
+  mw.base.innerHTML = slots;
+  mw.wake.innerHTML = slots; // same slots, so the lit word lands exactly on the dormant one
+  const chars = [...mw.base.children];
+  const wakeChars = [...mw.wake.children];
   const resolved = chars.map(() => false);
+  // Lock each slot to its final letter's width so scrambling never jitters the line.
+  document.fonts
+    .load('800 100px "Big Shoulders Display"')
+    .catch(() => {})
+    .then(() =>
+      requestAnimationFrame(() => {
+        const size = parseFloat(getComputedStyle(mw.base).fontSize);
+        chars.forEach((c, i) => {
+          const em = `${(c.getBoundingClientRect().width / size).toFixed(4)}em`;
+          c.style.width = em;
+          wakeChars[i].style.width = em;
+        });
+        mw.fit();
+      })
+    );
 
   // ── Context switching (triggered, not scrubbed: elastic needs real time) ──
   let active = -1;
@@ -193,14 +216,10 @@ export default function mount(shell) {
       const done = glitch.resolve > i / chars.length;
       if (done && !resolved[i]) {
         resolved[i] = true;
+        // No transform here: a transformed letter escapes the text clip.
         c.textContent = word[i];
-        c.classList.add('on');
-        gsap.fromTo(c, { scale: 1.4 }, { scale: 1, duration: 0.8, ease: ELASTIC });
       } else if (!done) {
-        if (resolved[i]) {
-          resolved[i] = false;
-          c.classList.remove('on');
-        }
+        if (resolved[i]) resolved[i] = false;
         if (step) c.textContent = GLYPHS[(Math.random() * GLYPHS.length) | 0];
       }
     });
@@ -239,11 +258,14 @@ export default function mount(shell) {
       .to('[data-wash="2"]', { opacity: 1, duration: 2.2, ease: 'power2.inOut' }, 6.6)
       .to(glitch, { amount: 0, duration: 1.6, ease: 'power2.out' }, 7.6)
       .to(glitch, { resolve: 1.001, duration: 1.8 }, 7.9)
+      .to(mw.wake, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 9.6)
       .to($('[data-line]'), { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 9.6)
       .to({}, { duration: 0.8 });
   });
 
   shell.coda({
+    keyword: 'override',
+    material: 'halftone',
     statement: 'Same call.<br />Different answer.',
     code: [
       `<span><b class="k">const</b> things = [<b class="k">new</b> <b class="pub">Speaker</b>(), <b class="k">new</b> <b class="pub">Clock</b>(), <b class="k">new</b> <b class="pub">Pin</b>()];</span>`,

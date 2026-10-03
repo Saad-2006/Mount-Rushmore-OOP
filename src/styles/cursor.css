@@ -43,8 +43,6 @@ html.has-cursor * { cursor: none !important; }
 .cursor__label {
   margin: 30px 0 0 22px;
   font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: var(--tint, var(--bone));
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9);
   opacity: 0;
@@ -79,19 +77,19 @@ html.has-cursor * { cursor: none !important; }
 .cursor[data-mode='encapsulation'] .cursor__dot { background: #f5a623; width: 4px; height: 4px; margin: -2px 0 0 -2px; }
 .cursor[data-mode='encapsulation'].is-hover .cursor__box::before { transform: scale(calc(1.5 * var(--press))) rotate(45deg); }
 
-/* ── Abstraction: just the idea of a pointer ───────────────────────────── */
+/* ── Abstraction: just the idea of a pointer ───────────────────────────
+   Difference blending, per pixel: #e0a41f subtracted from the paper (#fafafa)
+   reads as cobalt; over anything dark it reads as amber. Straddling an edge,
+   each part of the dot takes the colour of what it's actually over. */
+.cursor[data-mode='abstraction'] { mix-blend-mode: difference; }
 .cursor[data-mode='abstraction'] .cursor__ring { opacity: 0; }
 .cursor[data-mode='abstraction'] .cursor__dot {
   width: 12px; height: 12px; margin: -6px 0 0 -6px;
-  background: #1a56db;
+  background: #e0a41f;
   transform-origin: center;
 }
 .cursor[data-mode='abstraction'].is-hover .cursor__dot { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
-.cursor[data-mode='abstraction'] .cursor__label { color: #1a56db; text-shadow: none; }
-/* Multiply with the page, so whatever the dot covers still reads through it. */
-.cursor[data-mode='abstraction'] { mix-blend-mode: multiply; }
-/* The menu is dark: multiply would swallow the dot, so invert it instead. */
-html.menu-open .cursor[data-mode='abstraction'] { mix-blend-mode: normal; filter: invert(1); }
+.cursor[data-mode='abstraction'] .cursor__label { color: #e0a41f; text-shadow: none; }
 
 /* ── Inheritance: a parent and the children who follow it ─────────────── */
 .cursor[data-mode='inheritance'] .cursor__ring { opacity: 0; }

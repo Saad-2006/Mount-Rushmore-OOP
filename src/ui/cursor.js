@@ -31,7 +31,7 @@ function createCursor() {
     <div class="cursor__chain" data-c="chain">${'<span></span>'.repeat(3)}</div>
     <svg class="cursor__shape" data-c="shape" viewBox="0 0 24 24"><path d="${SHAPES.circle}"/></svg>
     <div class="cursor__dot" data-c="dot"></div>
-    <div class="cursor__label mono" data-c="label"></div>
+    <div class="cursor__label label" data-c="label"></div>
   `;
   document.body.append(el);
   document.documentElement.classList.add('has-cursor');

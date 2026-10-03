@@ -6,11 +6,14 @@ import { createPreloader } from './ui/preloader.js';
 import { createSoundToggle } from './ui/sound-toggle.js';
 import { createMenu } from './ui/menu.js';
 import { magnetize } from './ui/magnetic.js';
+import { createFrame } from './ui/frame.js';
+import { createCurtain } from './ui/curtain.js';
 import { createStage } from './gl/stage.js';
 import { createSky } from './gl/sky.js';
 import { createMountain } from './gl/mountain.js';
 import { createRig } from './gl/rig.js';
 import { createWarp } from './gl/warp.js';
+import { createSkyWord } from './gl/skyword.js';
 import { createHub } from './ui/hub.js';
 import { createRouter } from './router.js';
 import { createShell } from './worlds/shell.js';
@@ -26,6 +29,8 @@ const preloader = createPreloader();
 const sound = createSoundToggle();
 const mountain = createMountain(stage, { onProgress: (p) => preloader.progress(p) });
 const warp = createWarp({ stage, rig, mountain });
+const skyWord = createSkyWord(stage, sky);
+const curtain = createCurtain();
 
 const router = createRouter((id) => navigate(id));
 const hub = createHub({
@@ -33,6 +38,7 @@ const hub = createHub({
   mountain,
   rig,
   sky,
+  skyWord,
   onEnter: (m) => router.go(m.id),
 });
 
@@ -41,6 +47,11 @@ const menu = createMenu({
   onOpen: () => current?.shell.lenis.stop(),
   onClose: () => current?.shell.lenis.start(),
 });
+const frame = createFrame({
+  onBrand: (world) => world && router.go(null),
+  onIndex: (world) => menu.show(world),
+});
+frame.hub();
 magnetize(document);
 
 const baseTitle = document.title;
@@ -74,12 +85,13 @@ async function mountWorld(id) {
     monument,
     onBack: () => router.go(null),
     onNext: (next) => router.go(next.id),
-    onMenu: () => menu.show(id),
+    onLine: (n) => frame.line(n),
   });
   const world = mount(shell, monument);
   magnetize(shell.root);
   document.documentElement.classList.add('in-world');
   cursor.setMode(id);
+  frame.world(id);
   audio.scene(id);
   document.documentElement.dataset.world = id;
   document.title = `${monument.name} — ${baseTitle}`;
@@ -87,12 +99,17 @@ async function mountWorld(id) {
   return world;
 }
 
-function unmountWorld() {
+// `toHub: false` when another world follows straight away — the mountain's
+// cursor, corners and sound shouldn't flash up in between.
+function unmountWorld({ toHub = true } = {}) {
   current.world.destroy?.();
   current.shell.destroy();
   document.documentElement.classList.remove('in-world');
-  cursor.setMode('hub');
-  audio.scene('hub');
+  if (toHub) {
+    cursor.setMode('hub');
+    frame.hub();
+    audio.scene('hub');
+  }
   delete document.documentElement.dataset.world;
   document.title = baseTitle;
   current = null;
@@ -117,12 +134,14 @@ async function toWorldFromHub(id) {
 
 async function toWorldFromWorld(id) {
   cursor.hide();
-  audio.whoosh(0.9);
-  await warp.cover(indexOf(id));
-  unmountWorld();
+  audio.whoosh(1.1);
+  const load = worlds[id]();
+  await curtain.cover(id);
+  await load;
+  unmountWorld({ toHub: false });
   const world = await mountWorld(id);
   audio.arrive();
-  warp.uncover(1.1);
+  curtain.uncover();
   world.enter?.();
   cursor.show();
 }
@@ -161,6 +180,7 @@ function settleHub() {
     busy = false;
     world.enter?.();
     sound.show();
+    frame.show();
     mountain.ready.then(settleHub);
     return;
   }
@@ -172,5 +192,6 @@ function settleHub() {
   await hub.waitForCommit();
   sound.decide();
   sound.show();
+  frame.show();
   await hub.approach();
 })();
