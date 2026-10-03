@@ -39,7 +39,6 @@ export function createMenu({ onGo, onOpen, onClose }) {
     current = currentId;
     items.forEach((b) => b.toggleAttribute('aria-current', b.dataset.go === (currentId || '')));
     el.classList.add('is-open');
-    document.documentElement.classList.add('menu-open');
     onOpen?.();
     gsap.fromTo(
       el.querySelectorAll('.menu__item, .menu__kicker, .menu__foot, .menu__close'),
@@ -53,7 +52,6 @@ export function createMenu({ onGo, onOpen, onClose }) {
     if (!open) return Promise.resolve();
     open = false;
     el.classList.remove('is-open');
-    document.documentElement.classList.remove('menu-open');
     onClose?.();
     return new Promise((r) => setTimeout(r, 650));
   }
